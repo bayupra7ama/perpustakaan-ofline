@@ -1,0 +1,17 @@
+/* HAPUS semua @source, @theme, dll
+   Ganti dengan CSS standar seperti ini */
+
+:root {
+    /* font default */
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+
+    /* warna tema – boleh kamu ganti lagi nanti */
+    --color-primary: #f97316;   /* orange */
+    --color-secondary: #1e293b; /* dark blue */
+    --color-accent: #e11d48;    /* pink */
+}
+
+/* opsional: pakai font di seluruh halaman */
+body {
+    font-family: var(--font-sans);
+}

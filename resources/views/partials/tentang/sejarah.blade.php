@@ -1,0 +1,3 @@
+<p class="text-sm leading-relaxed text-slate-700">
+    Perpustakaan SMPN 8 Bengkalis merupakan fasilitas penting...
+</p>
