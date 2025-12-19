@@ -101,7 +101,7 @@
                     </div>
                 </div>
 
-                {{-- LAYANAN PERPUSTAKAAN (dropdown) --}}
+                {{-- LAYANAN PERPUSTAKAAN (dropdown)
                 <div class="relative group">
                     <button class="flex items-center gap-1
                         {{ request()->routeIs('layanan.*') ? 'font-semibold text-amber-600 border-b-2 border-amber-600 pb-1' : 'hover:text-amber-600' }}">
@@ -111,35 +111,10 @@
                         </span>
                     </button>
 
-                    <div
-                        class="absolute left-0 top-full w-72 bg-white rounded-xl shadow-lg border border-slate-200 py-2
-                            opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                            transition duration-200 z-20">
-
-                        <a href="{{ route('layanan.baca') }}"
-                        class="block px-4 py-2 text-xs text-slate-700 hover:bg-amber-50 hover:text-amber-700">
-                            Layanan Baca di Tempat
-                        </a>
-
-                        <a href="{{ route('layanan.sirkulasi') }}"
-                        class="block px-4 py-2 text-xs text-slate-700 hover:bg-amber-50 hover:text-amber-700">
-                            Layanan Sirkulasi
-                        </a>
-
-                        <a href="{{ route('layanan.referensi') }}"
-                        class="block px-4 py-2 text-xs text-slate-700 hover:bg-amber-50 hover:text-amber-700">
-                            Layanan Referensi
-                        </a>
-
-                        <a href="{{ route('layanan.penelusuran') }}"
-                        class="block px-4 py-2 text-xs text-slate-700 hover:bg-amber-50 hover:text-amber-700">
-                            Layanan Penelusuran Informasi
-                        </a>
-                    </div>
+                
                 </div>
 
 
-                {{-- LAYANAN REFERENSI (BARU) --}}
                 <div class="relative group">
                     <button class="flex items-center gap-1
                         {{ request()->routeIs('referensi.*') ? 'font-semibold text-amber-600 border-b-2 border-amber-600 pb-1' : 'hover:text-amber-600' }}">
@@ -169,16 +144,16 @@
                             Layanan Kesiagaan Informasi
                         </a>
                     </div>
-                </div>
+                </div> --}}
 
 
-                {{-- PETA --}}
+                {{-- PETA
                 <a href="{{ route('user.peta') }}"
                    class="{{ $isPeta
                         ? 'font-semibold text-amber-600 border-b-2 border-amber-600 pb-1'
                         : 'hover:text-amber-600' }}">
                     Peta
-                </a>
+                </a> --}}
 
             </nav>
 

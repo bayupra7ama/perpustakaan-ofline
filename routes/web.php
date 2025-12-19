@@ -35,21 +35,21 @@ route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    // yang baru (dropdown)
-    Route::prefix('user/layanan-perpustakaan')->group(function () {
-        Route::get('/baca-di-tempat', [LayananPerpustakaanController::class, 'bacaDiTempat'])->name('layanan.baca');
-        Route::get('/sirkulasi', [LayananPerpustakaanController::class, 'sirkulasi'])->name('layanan.sirkulasi');
-        Route::get('/referensi', [LayananPerpustakaanController::class, 'referensi'])->name('layanan.referensi');
-        Route::get('/penelusuran-informasi', [LayananPerpustakaanController::class, 'penelusuranInformasi'])->name('layanan.penelusuran');
-    });
+    // // yang baru (dropdown)
+    // Route::prefix('user/layanan-perpustakaan')->group(function () {
+    //     Route::get('/baca-di-tempat', [LayananPerpustakaanController::class, 'bacaDiTempat'])->name('layanan.baca');
+    //     Route::get('/sirkulasi', [LayananPerpustakaanController::class, 'sirkulasi'])->name('layanan.sirkulasi');
+    //     Route::get('/referensi', [LayananPerpustakaanController::class, 'referensi'])->name('layanan.referensi');
+    //     Route::get('/penelusuran-informasi', [LayananPerpustakaanController::class, 'penelusuranInformasi'])->name('layanan.penelusuran');
+    // });
 
 });
 
-Route::prefix('user/layanan-referensi')->name('referensi.')->group(function () {
-    Route::get('/meja-informasi', [LayananReferensiController::class, 'mejaInformasi'])->name('meja');
-    Route::get('/konsultasi', [LayananReferensiController::class, 'konsultasi'])->name('konsultasi');
-    Route::get('/kesiagaan-informasi', [LayananReferensiController::class, 'kesiagaanInformasi'])->name('kesiagaan');
-});
+// Route::prefix('user/layanan-referensi')->name('referensi.')->group(function () {
+//     Route::get('/meja-informasi', [LayananReferensiController::class, 'mejaInformasi'])->name('meja');
+//     Route::get('/konsultasi', [LayananReferensiController::class, 'konsultasi'])->name('konsultasi');
+//     Route::get('/kesiagaan-informasi', [LayananReferensiController::class, 'kesiagaanInformasi'])->name('kesiagaan');
+// });
 
 // =====================
 // ROUTE YANG WAJIB LOGIN (auth)
@@ -106,14 +106,14 @@ Route::middleware('auth')->group(function () {
 
     // ---------------------
     // LAYANAN PERPUSTAKAAN (USER)
-// ---------------------
-    Route::prefix('user/layanan-perpustakaan')->name('layanan.')->group(function () {
-    Route::get('/peminjaman', [LayananPerpustakaanController::class, 'peminjaman'])
-        ->name('peminjaman');
+// // ---------------------
+//     Route::prefix('user/layanan-perpustakaan')->name('layanan.')->group(function () {
+//     Route::get('/peminjaman', [LayananPerpustakaanController::class, 'peminjaman'])
+//         ->name('peminjaman');
 
-    Route::get('/tata-tertib', [LayananPerpustakaanController::class, 'tataTertib'])
-        ->name('tatatertib');
-    });
+//     Route::get('/tata-tertib', [LayananPerpustakaanController::class, 'tataTertib'])
+//         ->name('tatatertib');
+//     });
 
 
     // LAYANAN REFERENSI (USER)
