@@ -1,4 +1,4 @@
-<section class="mt-12 w-full bg-amber-500 text-white">
+<section class="mt-12 w-full bg-[#00499c] text-white">
     {{-- isi dibatasi agar rapi tapi box kuning full kiri–kanan --}}
     <div class="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
 
@@ -7,12 +7,12 @@
             {{-- KOL 1: LOGO + DESKRIPSI --}}
             <div class="flex flex-col gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="h-20 w-20 rounded-full bg-white/90 flex items-center justify-center shadow-md">
-                        {{-- nanti ganti dengan <img> logo sekolah kalau sudah ada --}}
-                        <span class="text-[11px] font-bold text-amber-600 text-center leading-tight">
-                            LOGO<br>SEKOLAH
-                        </span>
+                    <div
+                        class="h-20 w-20 rounded-full bg-white/90 flex items-center justify-center shadow-md overflow-hidden">
+                        <img src="{{ asset('img/logo.png') }}" alt="Logo SMPN 8 Bengkalis"
+                            class="h-16 w-16 object-contain">
                     </div>
+
                 </div>
                 <div class="mt-2">
                     <p class="text-sm font-semibold">

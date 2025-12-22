@@ -15,7 +15,6 @@ class Category extends Model
 
     public function books()
     {
-        // sesuaikan foreign key & local key kalau beda
-        return $this->hasMany(Book::class, 'category_id', 'id');
+        return $this->belongsToMany(Book::class);
     }
 }

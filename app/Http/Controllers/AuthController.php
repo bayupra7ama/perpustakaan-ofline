@@ -22,24 +22,22 @@ class AuthController extends Controller
     {
         // validasi input
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-            if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             $user = Auth::user();
 
-            // flash message login berhasil
             session()->flash('success', 'Login berhasil! Selamat datang, ' . $user->name . '.');
 
-
-            if ($user->role === 'admin') {
-                return redirect()->route('dashboard');
-            }
-
-            return redirect()->route('user.dashboard');
+            return match ($user->role) {
+                'admin' => redirect()->route('admin.dashboard'),
+                // 'guru' => redirect()->route('guru.dashboard'),
+                default => redirect()->route('user.dashboard'),
+            };
         }
 
 
@@ -62,23 +60,23 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name'                  => ['required', 'string', 'max:255'],
-            'email'                 => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password'              => ['required', 'min:6', 'confirmed'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'min:6', 'confirmed'],
         ], [
-            'name.required'      => 'Nama lengkap wajib diisi.',
-            'email.required'     => 'Email wajib diisi.',
-            'email.unique'       => 'Email ini sudah terdaftar.',
-            'password.required'  => 'Password wajib diisi.',
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'password.required' => 'Password wajib diisi.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         // Buat user baru dengan role "user"
         User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
+            'name' => $data['name'],
+            'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role'     => 'user',   // pastikan kolom role sudah ada di tabel users
+            'role' => 'user',   // pastikan kolom role sudah ada di tabel users
         ]);
 
         // ❌ TIDAK lagi auto-login

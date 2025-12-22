@@ -14,12 +14,12 @@ class BookController extends Controller
     {
         $q = $request->input('q');
 
-        $books = Book::with('category')
+        $books = Book::with('categories')
             ->when($q, function ($query) use ($q) {
                 $query->where('judul', 'like', "%{$q}%")
-                      ->orWhere('penulis', 'like', "%{$q}%");
+                    ->orWhere('penulis', 'like', "%{$q}%");
             })
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->paginate(10);
 
         return view('admin.buku.index', compact('books', 'q'));
@@ -37,28 +37,45 @@ class BookController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'judul'        => ['required', 'string', 'max:255'],
-            'penulis'      => ['required', 'string', 'max:255'],
-            'penerbit'     => ['nullable', 'string', 'max:255'],
+            'judul' => ['required', 'string', 'max:255'],
+            'penulis' => ['required', 'string', 'max:255'],
+            'penerbit' => ['nullable', 'string'],
             'tahun_terbit' => ['nullable', 'digits:4'],
-            'category_id'  => ['required', 'exists:categories,id'],
-        ], [
-            'judul.required'        => 'Judul buku wajib diisi.',
-            'penulis.required'      => 'Nama penulis wajib diisi.',
-            'category_id.required'  => 'Kategori wajib dipilih.',
-            'category_id.exists'    => 'Kategori tidak ditemukan.',
+            'kelas' => ['nullable', 'string'],
+            'categories' => ['required', 'array'],
+            'categories.*' => ['exists:categories,id'],
+            'file' => ['nullable', 'mimes:pdf', 'max:10240'],
+            'cover' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        // nilai tambahan default
-        $data['hit_count'] = 0;     // jumlah akses awal
-        $data['file_path'] = null;  // sementara belum ada file yang di-upload
+        // upload file buku
+        if ($request->hasFile('file')) {
+            $data['file_path'] = $request->file('file')
+                ->store('books/files', 'public');
+        }
 
-        Book::create($data);
+        // upload cover
+        if ($request->hasFile('cover')) {
+            $data['cover_path'] = $request->file('cover')
+                ->store('books/covers', 'public');
+        }
+
+        $data['hit_count'] = 0;
+        $data['jumlah_akses'] = 0;
+        $data['jumlah_unduh'] = 0;
+        $data['is_active'] = true;
+
+        $book = Book::create($data);
+
+        // SIMPAN RELASI KATEGORI
+        $book->categories()->sync($request->categories);
 
         return redirect()
             ->route('admin.buku.index')
             ->with('success', 'Buku berhasil ditambahkan.');
     }
+
+
 
     // FORM EDIT
     public function edit(Book $buku)
@@ -66,7 +83,7 @@ class BookController extends Controller
         $categories = Category::orderBy('name')->get();
 
         return view('admin.buku.edit', [
-            'book'       => $buku,
+            'book' => $buku,
             'categories' => $categories,
         ]);
     }
@@ -75,19 +92,40 @@ class BookController extends Controller
     public function update(Request $request, Book $buku)
     {
         $data = $request->validate([
-            'judul'        => ['required', 'string', 'max:255'],
-            'penulis'      => ['required', 'string', 'max:255'],
-            'penerbit'     => ['nullable', 'string', 'max:255'],
+            'judul' => ['required', 'string', 'max:255'],
+            'penulis' => ['required', 'string', 'max:255'],
+            'penerbit' => ['nullable', 'string', 'max:255'],
             'tahun_terbit' => ['nullable', 'digits:4'],
-            'category_id'  => ['required', 'exists:categories,id'],
+            'kelas' => ['nullable', 'string'],
+            'categories' => ['required', 'array'],
+            'categories.*' => ['exists:categories,id'],
+            'file' => ['nullable', 'mimes:pdf', 'max:10240'],
+            'cover' => ['nullable', 'image', 'max:2048'],
         ]);
 
+        // upload file baru (jika ada)
+        if ($request->hasFile('file')) {
+            $data['file_path'] = $request->file('file')
+                ->store('books/files', 'public');
+        }
+
+        // upload cover baru (jika ada)
+        if ($request->hasFile('cover')) {
+            $data['cover_path'] = $request->file('cover')
+                ->store('books/covers', 'public');
+        }
+
+        // update data utama
         $buku->update($data);
+
+        // sync kategori (many-to-many)
+        $buku->categories()->sync($request->categories);
 
         return redirect()
             ->route('admin.buku.index')
             ->with('success', 'Data buku berhasil diperbarui.');
     }
+
 
     // HAPUS
     public function destroy(Book $buku)

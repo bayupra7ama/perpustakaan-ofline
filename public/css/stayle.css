@@ -1,0 +1,35 @@
+.loader {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-inner .circle {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #e5e7eb;
+    border-top-color: #00499c;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* default disembunyikan setelah load */
+body.loaded .loader {
+    display: none;
+}
+
+.category-btn.active {
+    background-color: #00499c;
+    color: white !important;
+    border-color: #00499c;
+}

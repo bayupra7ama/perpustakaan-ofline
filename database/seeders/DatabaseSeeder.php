@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        
         // Admin
         User::updateOrCreate(
             ['email' => 'admin@smpn8.sch.id'],

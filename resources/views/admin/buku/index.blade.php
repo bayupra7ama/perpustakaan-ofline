@@ -5,36 +5,93 @@
 @section('content')
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
 
-        <h1 class="text-lg font-semibold text-slate-800 mb-2">
+        {{-- JUDUL --}}
+        <h1 class="text-lg font-semibold text-slate-800">
             Manajemen Koleksi Buku
         </h1>
 
-        {{-- Alert sukses --}}
-        @if(session('success'))
-            <div class="mb-3 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg">
+        {{-- ALERT --}}
+        @if (session('success'))
+            <div class="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Bar atas: cari + tombol tambah --}}
+        {{-- TOP BAR --}}
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <form method="GET" class="w-full md:w-1/2">
-                <div class="relative">
-                    <input type="text" name="q" value="{{ $q }}"
-                           class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                           placeholder="Cari judul atau penulis...">
-                </div>
+                <input type="text" name="q" value="{{ $q }}"
+                    class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs
+                          focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Cari judul atau penulis...">
             </form>
 
             <a href="{{ route('admin.buku.create') }}"
-               class="inline-flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
+                class="inline-flex items-center gap-2 px-3 py-2
+                  text-xs font-semibold rounded-lg
+                  bg-emerald-600 text-white hover:bg-emerald-700">
                 + Tambah Buku
             </a>
         </div>
 
-        {{-- Tabel buku --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mt-3 overflow-hidden">
-            <table class="min-w-full text-xs">
+        {{-- ================= MOBILE VIEW (CARD) ================= --}}
+        <div class="space-y-3 md:hidden">
+            @forelse($books as $book)
+                <div class="bg-white rounded-xl border border-slate-100 p-4 space-y-2">
+
+                    <div class="font-semibold text-slate-800">
+                        {{ $book->judul }}
+                    </div>
+
+                    <div class="text-xs text-slate-600">
+                        ✍ {{ $book->penulis }}
+                    </div>
+
+                    {{-- KATEGORI --}}
+                    <div class="flex flex-wrap gap-1">
+                        @forelse($book->categories as $category)
+                            <span
+                                class="text-[10px] px-2 py-0.5 rounded-full
+                                     bg-emerald-50 text-emerald-700">
+                                {{ $category->name }}
+                            </span>
+                        @empty
+                            <span class="text-[10px] text-slate-400">Tanpa kategori</span>
+                        @endforelse
+                    </div>
+
+                    <div class="text-xs text-slate-500">
+                        Tahun: {{ $book->tahun_terbit ?? '-' }}
+                    </div>
+
+                    {{-- AKSI --}}
+                    <div class="flex gap-2 pt-2">
+                        <a href="{{ route('admin.buku.edit', $book) }}"
+                            class="flex-1 text-center text-xs py-1.5 rounded border border-slate-200">
+                            Edit
+                        </a>
+
+                        <form action="{{ route('admin.buku.destroy', $book) }}" method="POST" class="flex-1"
+                            onsubmit="return confirm('Hapus buku ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button class="w-full text-xs py-1.5 rounded border border-red-200 text-red-600">
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center text-slate-500 text-xs py-6">
+                    Belum ada data buku
+                </div>
+            @endforelse
+        </div>
+
+        {{-- ================= DESKTOP VIEW (TABLE) ================= --}}
+        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-100">
+
+            <table class="w-full text-xs">
                 <thead class="bg-slate-50 text-slate-500">
                     <tr>
                         <th class="px-4 py-2 text-left w-10">#</th>
@@ -45,45 +102,49 @@
                         <th class="px-4 py-2 text-right w-32">Aksi</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @forelse($books as $index => $book)
-                        <tr class="border-t border-slate-100">
+                        <tr class="border-t border-slate-100 hover:bg-slate-50">
                             <td class="px-4 py-2">
                                 {{ $books->firstItem() + $index }}
                             </td>
 
-                            {{-- ganti title -> judul --}}
                             <td class="px-4 py-2 font-semibold text-slate-800">
                                 {{ $book->judul }}
                             </td>
 
-                            {{-- ganti author -> penulis --}}
                             <td class="px-4 py-2 text-slate-600">
                                 {{ $book->penulis }}
                             </td>
 
-                            <td class="px-4 py-2 text-slate-600">
-                                {{ $book->category->name ?? '-' }}
+                            <td class="px-4 py-2">
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach ($book->categories as $category)
+                                        <span
+                                            class="text-[10px] px-2 py-0.5 rounded-full
+                                             bg-emerald-50 text-emerald-700">
+                                            {{ $category->name }}
+                                        </span>
+                                    @endforeach
+                                </div>
                             </td>
 
-                            {{-- ganti year -> tahun_terbit --}}
                             <td class="px-4 py-2 text-slate-600">
                                 {{ $book->tahun_terbit ?? '-' }}
                             </td>
 
                             <td class="px-4 py-2 text-right space-x-1">
                                 <a href="{{ route('admin.buku.edit', $book) }}"
-                                   class="inline-flex items-center px-2 py-1 rounded border border-slate-200 text-[11px] text-slate-600 hover:bg-slate-50">
+                                    class="px-2 py-1 text-[11px] border rounded">
                                     Edit
                                 </a>
-                                <form action="{{ route('admin.buku.destroy', $book) }}"
-                                      method="POST"
-                                      class="inline-block"
-                                      onsubmit="return confirm('Hapus buku ini?')">
+
+                                <form action="{{ route('admin.buku.destroy', $book) }}" method="POST" class="inline-block"
+                                    onsubmit="return confirm('Hapus buku ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit"
-                                            class="inline-flex items-center px-2 py-1 rounded border border-red-200 text-[11px] text-red-600 hover:bg-red-50">
+                                    <button class="px-2 py-1 text-[11px] border border-red-200 text-red-600 rounded">
                                         Hapus
                                     </button>
                                 </form>
@@ -91,17 +152,19 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-4 text-center text-slate-500">
-                                Belum ada data buku. Silakan tambah buku baru.
+                            <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                                Belum ada data buku
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
-
-            <div class="px-4 py-3 border-t border-slate-100">
-                {{ $books->links() }}
-            </div>
         </div>
+
+        {{-- PAGINATION --}}
+        <div class="pt-3">
+            {{ $books->links() }}
+        </div>
+
     </div>
 @endsection

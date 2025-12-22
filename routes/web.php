@@ -1,160 +1,148 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\UserDashboardController;
+use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\Admin\BookController as AdminBookController;
-use App\Http\Controllers\LayananPerpustakaanController;
-use App\Http\Controllers\LayananReferensiController;
 use App\Http\Controllers\UserBookController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Guru\GuruBookController;
+use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\LayananReferensiController;
+use App\Http\Controllers\Guru\GuruDashboardController;
 
+use App\Http\Controllers\LayananPerpustakaanController;
+use App\Http\Controllers\Admin\BookController as AdminBookController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 
-// =====================
-// ROOT -> REDIRECT KE DASHBOARD ADMIN
-// =====================
+/*
+|--------------------------------------------------------------------------
+| ROOT
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
-    return redirect()->route('dashboard');
+    if (!auth()->check()) {
+        return redirect()->route('login');
+    }
+
+    return match (auth()->user()->role) {
+        'admin' => redirect()->route('admin.dashboard'),
+        // 'guru' => redirect()->route('guru.dashboard'),
+        default => redirect()->route('user.dashboard'),
+    };
 });
 
-route::middleware('auth')->group(function () {
+/*
+|--------------------------------------------------------------------------
+| AUTH (LOGIN & REGISTER)
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 
-    // ... route lain yang sudah ada
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-    // ======== BUKU ELEKTRONIK (USER) ========
-
-    // Buku Kelas 7 / 8 / 9
-    Route::get('/user/buku/kelas/{kelas}', [UserBookController::class, 'byKelas'])
-        ->name('user.buku.kelas');
-
-    // Panduan Guru
-    Route::get('/user/buku/panduan-guru', [UserBookController::class, 'panduanGuru'])
-        ->name('user.buku.panduan');
-});
-
+/*
+|--------------------------------------------------------------------------
+| ROUTE WAJIB LOGIN
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
 
-    // // yang baru (dropdown)
-    // Route::prefix('user/layanan-perpustakaan')->group(function () {
-    //     Route::get('/baca-di-tempat', [LayananPerpustakaanController::class, 'bacaDiTempat'])->name('layanan.baca');
-    //     Route::get('/sirkulasi', [LayananPerpustakaanController::class, 'sirkulasi'])->name('layanan.sirkulasi');
-    //     Route::get('/referensi', [LayananPerpustakaanController::class, 'referensi'])->name('layanan.referensi');
-    //     Route::get('/penelusuran-informasi', [LayananPerpustakaanController::class, 'penelusuranInformasi'])->name('layanan.penelusuran');
-    // });
-
-});
-
-// Route::prefix('user/layanan-referensi')->name('referensi.')->group(function () {
-//     Route::get('/meja-informasi', [LayananReferensiController::class, 'mejaInformasi'])->name('meja');
-//     Route::get('/konsultasi', [LayananReferensiController::class, 'konsultasi'])->name('konsultasi');
-//     Route::get('/kesiagaan-informasi', [LayananReferensiController::class, 'kesiagaanInformasi'])->name('kesiagaan');
-// });
-
-// =====================
-// ROUTE YANG WAJIB LOGIN (auth)
-// =====================
-Route::middleware('auth')->group(function () {
-
-    // ---------------------
-    // DASHBOARD ADMIN
-    // ---------------------
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD
+    |--------------------------------------------------------------------------
+    */
     Route::get('/dashboard', function () {
-
-        // DATA DUMMY SEMENTARA
-        $stats = [
-            'total_buku'      => 120,
-            'total_kategori'  => 18,
-            'total_user'      => 230,
-            'total_unduhan'   => 540,
-        ];
-
-        $latestBooks = [
-            ['judul' => 'Biologi Kelas IX',  'kategori' => 'Biologi',    'penulis' => 'Siti Rahma',   'tahun' => 2023],
-            ['judul' => 'Matematika Dasar', 'kategori' => 'Matematika', 'penulis' => 'Budi Santoso', 'tahun' => 2022],
-            ['judul' => 'Bahasa Indonesia', 'kategori' => 'Bahasa',     'penulis' => 'Dewi Lestari', 'tahun' => 2021],
-            ['judul' => 'Fisika untuk SMP', 'kategori' => 'Fisika',     'penulis' => 'R. Hidayat',   'tahun' => 2020],
-        ];
-
-        $recentDownloads = [
-            ['user' => 'Siswa - Ahmad',   'judul' => 'Biologi Kelas IX',  'waktu' => '2025-11-25 09:15'],
-            ['user' => 'Guru - Ibu Sari', 'judul' => 'Matematika Dasar', 'waktu' => '2025-11-25 08:50'],
-            ['user' => 'Siswa - Lina',    'judul' => 'Bahasa Indonesia', 'waktu' => '2025-11-24 15:20'],
-            ['user' => 'Siswa - Rudi',    'judul' => 'Fisika untuk SMP', 'waktu' => '2025-11-24 14:05'],
-        ];
-
-        return view('dashboard', compact('stats', 'latestBooks', 'recentDownloads'));
+        return view('dashboard');
     })->name('dashboard');
 
-    // ---------------------
-    // DASHBOARD & HALAMAN USER
-    // ---------------------
+    /*
+    |--------------------------------------------------------------------------
+    | USER AREA
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['auth', 'role:user,guru'])
+        ->prefix('user')
+        ->name('user.')
+        ->group(function () {
 
-    // Beranda User
-    Route::get('/user/dashboard', [UserDashboardController::class, 'index'])
-        ->name('user.dashboard');
+            Route::get('/dashboard', [UserDashboardController::class, 'index'])
+                ->name('dashboard');
 
-    // Koleksi Buku
-    Route::get('/user/koleksi', function () {
-        return view('user.koleksi');
-    })->name('user.koleksi');
+            Route::view('/koleksi', 'user.koleksi')->name('koleksi');
+            Route::view('/kategori', 'user.kategori')->name('kategori');
+            Route::view('/peta', 'user.peta')->name('peta');
 
-    // Kategori Buku
-    Route::get('/user/kategori', function () {
-        return view('user.kategori');
-    })->name('user.kategori');
+            Route::get('/buku', [UserBookController::class, 'index'])
+                ->name('buku.index');
 
-    // ---------------------
-    // LAYANAN PERPUSTAKAAN (USER)
-// // ---------------------
-//     Route::prefix('user/layanan-perpustakaan')->name('layanan.')->group(function () {
-//     Route::get('/peminjaman', [LayananPerpustakaanController::class, 'peminjaman'])
-//         ->name('peminjaman');
+            Route::get('/buku/kelas/{kelas}', [UserBookController::class, 'byKelas'])
+                ->name('buku.kelas');
 
-//     Route::get('/tata-tertib', [LayananPerpustakaanController::class, 'tataTertib'])
-//         ->name('tatatertib');
-//     });
+            Route::get('/panduan', [GuruBookController::class, 'index'])
+                ->name('panduan.index');
+
+            // Route::get('/panduan/ajax', [GuruBookController::class, 'ajax'])
+            //     ->name('panduan.ajax');
+    
+            Route::get('/buku/{book}', [UserBookController::class, 'show'])
+                ->name('buku.show');
+            Route::get('/buku/{book}/download', [UserBookController::class, 'download'])
+                ->name('buku.download');
 
 
-    // LAYANAN REFERENSI (USER)
-    Route::prefix('user/layanan-referensi')->name('referensi.')->group(function () {
 
-        // Koleksi Referensi
-        Route::get('/koleksi', [LayananReferensiController::class, 'koleksi'])
-            ->name('koleksi');
+        });
 
-        // Bantuan Penelusuran Informasi
-        Route::get('/bantuan', [LayananReferensiController::class, 'bantuan'])
-            ->name('bantuan');
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN AREA (BELUM ROLE, MASIH AUTH SAJA)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::resource('buku', AdminBookController::class);
+        Route::resource('kategori', AdminCategoryController::class);
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
-    // ---------------------
-    // ADMIN: KATEGORI (CRUD)
-    // ---------------------
-    Route::resource('admin/kategori', AdminCategoryController::class)
-        ->names([
-            'index'   => 'admin.kategori.index',
-            'create'  => 'admin.kategori.create',
-            'store'   => 'admin.kategori.store',
-            'edit'    => 'admin.kategori.edit',
-            'update'  => 'admin.kategori.update',
-            'destroy' => 'admin.kategori.destroy',
-        ]);
 
-    // BUKU ADMIN (Koleksi Buku)
-    Route::resource('admin/buku', AdminBookController::class)
-        ->names([
-            'index'   => 'admin.buku.index',
-            'create'  => 'admin.buku.create',
-            'store'   => 'admin.buku.store',
-            'edit'    => 'admin.buku.edit',
-            'update'  => 'admin.buku.update',
-            'destroy' => 'admin.buku.destroy',
-        ])->except(['show']);
 
-    // ---------------------
-    // LOGOUT (HANYA UNTUK USER YANG SUDAH LOGIN)
-    // ---------------------
+    Route::middleware(['auth', 'role:guru'])
+        ->prefix('guru')
+        ->name('guru.')
+        ->group(function () {
+
+
+            Route::get('/panduan/create', [GuruBookController::class, 'create'])
+                ->name('panduan.create');
+
+            Route::post('/panduan', [GuruBookController::class, 'store'])
+                ->name('panduan.store');
+        });
+
+    // //gurus
+    // Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
+    //     Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
+    //     // nanti: validasi peminjaman, laporan, dll
+    // });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOGOUT
+    |--------------------------------------------------------------------------
+    */
     Route::post('/logout', function () {
         Auth::logout();
         request()->session()->invalidate();
@@ -163,43 +151,13 @@ Route::middleware('auth')->group(function () {
     })->name('logout');
 });
 
-// =====================
-// HALAMAN TENTANG KAMI (BISA DIAKSES SIAPA SAJA)
-// =====================
-
-Route::get('/tentang/struktur-organisasi', function () {
-    return view('tentang.struktur');
-})->name('tentang.struktur');
-
-Route::get('/tentang/sejarah', function () {
-    return view('tentang.sejarah');
-})->name('tentang.sejarah');
-
-Route::get('/tentang/visi-misi', function () {
-    return view('tentang.visimisi');
-})->name('tentang.visimisi');
-
-// =====================
-// AUTH (LOGIN / REGISTER)
-// =====================
-
-// Form login
-Route::get('/login', [AuthController::class, 'showLoginForm'])
-    ->name('login');
-
-// Proses login
-Route::post('/login', [AuthController::class, 'login'])
-    ->name('login');
-
-// Form register (pendaftaran siswa)
-Route::get('/register', [AuthController::class, 'showRegisterForm'])
-    ->name('register');
-
-// Proses register
-Route::post('/register', [AuthController::class, 'register'])
-    ->name('register.post');
- 
- // Halaman Peta (khusus)
-Route::get('/user/peta', function () {
-    return view('user.peta');
-})->name('user.peta');
+/*
+|--------------------------------------------------------------------------
+| PUBLIC
+|--------------------------------------------------------------------------
+*/
+Route::prefix('tentang')->group(function () {
+    Route::view('/struktur-organisasi', 'tentang.struktur')->name('tentang.struktur');
+    Route::view('/sejarah', 'tentang.sejarah')->name('tentang.sejarah');
+    Route::view('/visi-misi', 'tentang.visimisi')->name('tentang.visimisi');
+});
