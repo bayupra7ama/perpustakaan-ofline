@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Semua Buku')
+@section('title', 'Semua Buku • Perpustakaan SMPN 8 Bengkalis')
 
 @section('content')
 

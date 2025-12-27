@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', $book->judul . ' - Perpustakaan SMPN 8 Bengkalis')
+@section('title', $book->judul . ' • Perpustakaan SMPN 8 Bengkalis')
 
 @section('content')
     <section class="max-w-6xl mx-auto px-4 py-10">

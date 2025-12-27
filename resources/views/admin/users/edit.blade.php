@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit User')
+@section('title', 'Edit User • Perpustakaan SMPN 8 Bengkalis')
 @section('page_title', 'Edit User')
 
 @section('content')

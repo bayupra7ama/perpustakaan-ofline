@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Buku - Perpustakaan Digital Offline')
+@section('title', 'Edit Buku • Perpustakaan SMPN 8 Bengkalis')
 
 @section('content')
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5">

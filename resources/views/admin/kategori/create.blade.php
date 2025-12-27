@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Kategori')
+@section('title', 'Tambah Kategori • Perpustakaan SMPN 8 Bengkalis')
 
 @section('content')
     <div class="max-w-3xl mx-auto py-6 space-y-6">

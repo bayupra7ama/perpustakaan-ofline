@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard Admin - Perpustakaan Digital Offline')</title>
+
+    {{-- FAVICON --}}
+    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
+    <title>@yield('title', 'Dashboard Admin • Perpustakaan SMPN 8 Bengkalis')</title>
 
     {{-- Tailwind CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>

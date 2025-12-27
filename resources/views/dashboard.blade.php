@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard Admin - Perpustakaan Digital Offline')
+@section('title', 'Dashboard Admin • Perpustakaan SMPN 8 Bengkalis')
 
 @section('content')
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">

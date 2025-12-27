@@ -5,11 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>@yield('title', 'Perpustakaan Sekolah - SMPN 8 Bengkalis')</title>
+    {{-- FAVICON --}}
+    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
+    <meta name="theme-color" content="#00499c">
+
+    <title>@yield('title', 'Perpustakaan SMPN 8 Bengkalis')</title>
 
     {{-- Tailwind CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('css/stayle.css') }}">
+    <link rel="stylesheet" href="{{ asset('img/logo.png') }}">
 
     {{-- Google Icons --}}
     <link rel="stylesheet"
@@ -172,7 +177,7 @@
                 class="block px-3 py-2 rounded-lg
                 {{ request()->routeIs('user.dashboard')
                     ? 'bg-blue-50 text-[#00499c]
-                                                                                                                                                                                                                                                                 font-semibold'
+                                                                                                                                                                                                                                                                                                                 font-semibold'
                     : 'hover:bg-slate-100' }}">
                 Beranda
             </a>
@@ -180,7 +185,7 @@
                 class="block px-3 py-2 rounded-lg
                 {{ request()->routeIs('user.buku.index')
                     ? 'bg-blue-50 text-[#00499c]
-                                                                                                                                                                                                                                                 font-semibold'
+                                                                                                                                                                                                                                                                                                 font-semibold'
                     : 'hover:bg-slate-100' }}">
                 Buku
             </a>
@@ -190,7 +195,7 @@
                 class="block px-3 py-2 rounded-lg
                 {{ request()->routeIs('user.panduan.*')
                     ? 'bg-blue-50 text-[#00499c]
-                                                                                                                                                                                                                                                 font-semibold'
+                                                                                                                                                                                                                                                                                                 font-semibold'
                     : 'hover:bg-slate-100' }}">
                 Panduan Guru
             </a>

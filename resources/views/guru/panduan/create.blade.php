@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Tambah Panduan Guru')
+@section('title', 'Tambah Panduan Guru • Perpustakaan SMPN 8 Bengkalis')
 
 @section('content')
     <div class="max-w-4xl mx-auto px-4 py-6 space-y-5">

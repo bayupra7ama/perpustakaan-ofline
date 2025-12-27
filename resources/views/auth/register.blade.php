@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar • Perpustakaan Digital SMPN 8 Bengkalis</title>
+
+    {{-- FAVICON --}}
+    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
+    <meta name="theme-color" content="#00499c">
+    <title>Daftar • Perpustakaan SMPN 8 Bengkalis</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
